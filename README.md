@@ -6,4 +6,4 @@
 
 ### Setup
 
-1.
+1. `yarn create next-app`
