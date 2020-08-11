@@ -2,7 +2,7 @@ export default [
   {
     id: "1",
     name: "CODED Live",
-    image: "http://127.0.0.1:8000/media/LogoOnTransparent_Square270.png",
+    image: "http://localhost:8000/media/LogoOnTransparent_Square270.png",
     cohorts: [
       {
         id: "1",
@@ -11,15 +11,15 @@ export default [
         instructors: [
           {
             name: "Mshary",
-            image: "http://127.0.0.1:8000/media/download.jpeg",
+            image: "http://localhost:8000/media/download.jpeg",
           },
           {
             name: "Darth Hamza",
-            image: "http://127.0.0.1:8000/media/darth-vader-helmet.jpg",
+            image: "http://localhost:8000/media/darth-vader-helmet.jpg",
           },
           {
             name: "Octowl",
-            image: "http://127.0.0.1:8000/media/download_1.jpeg",
+            image: "http://localhost:8000/media/download_1.jpeg",
           },
         ],
       },
@@ -30,15 +30,15 @@ export default [
         instructors: [
           {
             name: "Darth Hamza",
-            image: "http://127.0.0.1:8000/media/darth-vader-helmet.jpg",
+            image: "http://localhost:8000/media/darth-vader-helmet.jpg",
           },
           {
             name: "🐝",
-            image: "http://127.0.0.1:8000/media/honeybee_1f41d.png",
+            image: "http://localhost:8000/media/honeybee_1f41d.png",
           },
           {
             name: "Octowl",
-            image: "http://127.0.0.1:8000/media/download_1.jpeg",
+            image: "http://localhost:8000/media/download_1.jpeg",
           },
         ],
       },
@@ -47,7 +47,7 @@ export default [
   {
     id: "2",
     name: "Full Stack",
-    image: "http://127.0.0.1:8000/media/CodedFSBootcampLogo_aLZGmrI.png",
+    image: "http://localhost:8000/media/CodedFSBootcampLogo_aLZGmrI.png",
     cohorts: [
       {
         id: "3",
@@ -56,12 +56,12 @@ export default [
         instructors: [
           {
             name: "Mshary",
-            image: "http://127.0.0.1:8000/media/download.jpeg",
+            image: "http://localhost:8000/media/download.jpeg",
           },
           {
             name: "Lailz",
             image:
-              "http://127.0.0.1:8000/media/4508dc6d8ff0a7175b68af7b7220532a.png",
+              "http://localhost:8000/media/4508dc6d8ff0a7175b68af7b7220532a.png",
           },
         ],
       },
@@ -73,11 +73,40 @@ export default [
           {
             name: "Kale Salad",
             image:
-              "http://127.0.0.1:8000/media/benefits-of-kale-1200x628-facebook.jpg",
+              "http://localhost:8000/media/benefits-of-kale-1200x628-facebook.jpg",
           },
           {
             name: "Mshary",
-            image: "http://127.0.0.1:8000/media/download.jpeg",
+            image: "http://localhost:8000/media/download.jpeg",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "3",
+    name: "Data",
+    image: "http://localhost:8000/media/DataBootcampIcon.png",
+    cohorts: [
+      {
+        id: "5",
+        name: "Corona",
+        startDate: "2020-01-05",
+        instructors: [
+          {
+            name: "Darth Hamza",
+            image: "http://localhost:8000/media/darth-vader-helmet.jpg",
+          },
+        ],
+      },
+      {
+        id: "6",
+        name: "Post Corona",
+        startDate: "2021-01-05",
+        instructors: [
+          {
+            name: "Darth Hamza",
+            image: "http://localhost:8000/media/darth-vader-helmet.jpg",
           },
         ],
       },
