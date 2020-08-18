@@ -11,8 +11,9 @@ export default function Bootcamp({ bootcamp }) {
 
 export async function getStaticPaths() {
   const { data } = await axios.get("http://localhost:3001/bootcamps/ids");
+  const paths = data.map((id) => ({ params: { id } }));
   return {
-    paths: data,
+    paths,
     fallback: false,
   };
 }
