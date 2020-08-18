@@ -7,7 +7,7 @@ export default function Bootcamps({ bootcamps }) {
   return <BootcampList bootcamps={bootcamps} />;
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { data } = await axios.get("http://localhost:3001/bootcamps");
 
   return {

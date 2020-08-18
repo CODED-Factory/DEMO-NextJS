@@ -9,17 +9,18 @@ export default function Bootcamp({ bootcamp }) {
   return <BootcampDetail bootcamp={bootcamp} />;
 }
 
-export async function getServerSideProps(context) {
-  const { id } = context.params;
+export async function getStaticPaths() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps/ids");
+  return {
+    paths: data,
+    fallback: false,
+  };
+}
 
-  let bootcamp;
+export async function getStaticProps({ params }) {
+  const { data } = await axios.get(
+    `http://localhost:3001/bootcamps/${params.id}`
+  );
 
-  try {
-    const { data } = await axios.get(`http://localhost:3001/bootcamps/${id}`);
-    bootcamp = data;
-  } catch (error) {
-    console.error(error.message);
-  }
-
-  return { props: { bootcamp } };
+  return { props: { bootcamp: data } };
 }
