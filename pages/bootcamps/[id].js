@@ -5,7 +5,7 @@ import Error from "next/error";
 import BootcampDetail from "../../components/BootcampDetail";
 
 // Data
-import bootcamps from "../../data/bootcamps.json";
+import bootcamps from "../../bootcamps.json";
 
 export default function BootcampOne() {
   const { id } = useRouter().query;
