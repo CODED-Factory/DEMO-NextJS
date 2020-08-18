@@ -1,18 +1,26 @@
-import { useRouter } from "next/router";
+import axios from "axios";
 import Error from "next/error";
 
 // Components
 import BootcampDetail from "../../components/BootcampDetail";
 
-// Data
-import bootcamps from "../../data/bootcamps.json";
-
-export default function BootcampOne() {
-  const { id } = useRouter().query;
-
-  const bootcamp = bootcamps.find((bootcamp) => bootcamp.id === id);
-
+export default function Bootcamp({ bootcamp }) {
   if (!bootcamp) return <Error statusCode={404} />;
-
   return <BootcampDetail bootcamp={bootcamp} />;
+}
+
+export async function getStaticPaths() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps/ids");
+  return {
+    paths: data,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const { data } = await axios.get(
+    `http://localhost:3001/bootcamps/${params.id}`
+  );
+
+  return { props: { bootcamp: data } };
 }

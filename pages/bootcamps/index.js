@@ -1,9 +1,18 @@
+import axios from "axios";
+
 // Components
 import BootcampList from "../../components/BootcampList";
 
-// Data
-import bootcamps from "../../data/bootcamps.json";
-
-export default function Bootcamps() {
+export default function Bootcamps({ bootcamps }) {
   return <BootcampList bootcamps={bootcamps} />;
+}
+
+export async function getStaticProps() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps");
+
+  return {
+    props: {
+      bootcamps: data,
+    },
+  };
 }
