@@ -8,7 +8,7 @@ export default function Bootcamps({ bootcamps }) {
 }
 
 export async function getServerSideProps() {
-  const { data } = await axios.get("http://localhost:3000/api/bootcamps");
+  const { data } = await axios.get("http://localhost:3001/bootcamps");
 
   return {
     props: {

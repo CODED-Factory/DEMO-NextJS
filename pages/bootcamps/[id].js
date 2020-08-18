@@ -15,9 +15,7 @@ export async function getServerSideProps(context) {
   let bootcamp;
 
   try {
-    const { data } = await axios.get(
-      `http://localhost:3000/api/bootcamps/${id}`
-    );
+    const { data } = await axios.get(`http://localhost:3001/bootcamps/${id}`);
     bootcamp = data;
   } catch (error) {
     console.error(error.message);
