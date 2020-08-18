@@ -1,10 +1,11 @@
 # Next.js
 
 [Slides](https://docs.google.com/presentation/d/1f4rTPjVXGtefW04qkcVll0mcfhuao2LrrsrCcb9S-DM/edit?usp=sharing)
+[Next.js Documentation](https://nextjs.org/docs/getting-started)
 
 <!-- [Recording](https://youtu.be/MNHc0j8PDnE) -->
 
-### Setup
+## Setup
 
 1. Create a next app:
 
@@ -18,7 +19,7 @@
    $ yarn build && yarn start
    ```
 
-3. Run in development mode for hot-reloading:
+3. Run in development mode for hot-reloading (SSG will revert to SSR):
 
    ```bash
    $ yarn dev
@@ -31,57 +32,42 @@
    - modifying `Head`
    - accessing static content from `public`
 
-### Pages - Routing basics
+---
 
-1. Any file in `pages` is considered a page:
+## Pages - Routing basics
 
-   - The name of the file is the url
-   - `index.js` maps to `/`
-   - page files have to export a react component
+Any file in `pages` is considered a page:
 
-2. Create a `hello.js` file. Show it in the browser.
+1. The name of the file is the url - `pages/posts.js` will be served to `/posts`
+2. `index.js` will be server to `/`
+3. Files in `pages` have to export a react component
+
+   `pages/posts.js`
 
    ```jsx
-   export default function Hello() {
-     return <div>HELLO WORLD!</div>;
+   export default function Posts() {
+     return <div>POSTS PAGE!</div>;
    }
    ```
 
-3. Make a `bootcamps.js` page
+4. `Link` components from `next/link` can be used to navigate between pages.
+   **Important**: The `href` is the path to the **file** in `/pages` **not** the url
 
-   ```jsx
-   export default function Bootcamps() {
-     return (
-       <div>
-         <h1>All the bootcamps</h1>
-       </div>
-     );
-   }
-   ```
+`index.js`
 
-4. Use a `Link` in `index.js` to go to `/bootcamps`:
+```jsx
+import Link from "next/link";
 
-   `index.js`
+export default function Home() {
+  return (
+    <div>
+      <Link href="/posts">Posts</Link>
+    </div>
+  );
+}
+```
 
-   ```jsx
-   import Link from "next/link";
-
-   export default function Home() {
-     return (
-       <div>
-         <Link href="/bootcamps">Bootcamps</Link>
-       </div>
-     );
-   }
-   ```
-
-5. Content that should be included on every page (e.g. bootstrap, navbars, footers etc) should go in `_app.js`
-
-   Install Bootstrap:
-
-   ```bash
-   $ yarn add bootstrap
-   ```
+5. Content that should be included on every page (e.g. providers, context, themes, bootstrap, etc) should go in `_app.js`
 
    `_app.js`
 
@@ -96,8 +82,8 @@
              <a>pretend</a>
            </Link>{" "}
            I'm a navbar with a{" "}
-           <Link href="/bootcamps">
-             <a>link to bootcamps</a>
+           <Link href="/posts">
+             <a>link to posts</a>
            </Link>
          </p>
          <Component {...pageProps} />
@@ -110,29 +96,54 @@
 
    ```jsx
    return (
-     <Link href="/bootcamps">
-       <div className="btn btn-primary">Bootcamps</div>
+     <Link href="/posts">
+       <div className="btn btn-primary">Posts</div>
      </Link>
    );
    ```
 
-6. Create a subroute `/bootcamps/1`:
+6. Nested files and folders create compound routes:
 
-   - move `bootcamps.js` to `bootcamps/index.js`
-   - create `1.js`
-   - Link them together
+   ```
+   | - pages
+     | - index.js
+     | - test.js
+     | - posts
+         | - index.js
+         | - 1.js
+         | - 2.js
+     | - hello
+         | - hi
+             | - index.js
+             | - greeting.js
+         | - how-are-you.js
+   ```
 
-   `bootcamps/index.js`
+   will server pages at the following urls:
+
+   - `/`
+   - `/test`
+   - `/posts`
+   - `/posts/1`
+   - `/posts/2`
+   - `/hello`
+   - `/hello/hi`
+   - `/hello/hi/greeting`
+   - `/hello/how-are-you`
+
+   (Notice that there **isn't** a page at `/hello` because there isn't a `pages/hello/index.js`)
+
+   `pages/posts/index.js`
 
    ```jsx
    <div>
-     <h1>All the bootcamps</h1>
+     <h1>Posts Page</h1>
      <div className="row">
        <div className="col-3">
-         <Link href="/bootcamps/1">
+         <Link href="/posts/1">
            <div type="button" className="card m-5">
              <div className="card-body">
-               <h5 className="card-title">Bootcamp 1</h5>
+               <h5 className="card-title">Post 1</h5>
              </div>
            </div>
          </Link>
@@ -141,122 +152,271 @@
    </div>
    ```
 
-### Dynamic Routing
+---
 
-7. Add a data file
+## Dynamic Routing
 
-8. Import `bootcamps` and loop to create multiple cards:
+Manually naming our pages isn't always an option.  
+What if we have pages based on dynamic data?
 
-   `bootcamps/index.js`
+1. Files and folders in `pages` that have square brackets in the name (e.g. `[param].js` are considered dynamic.
+   The parameter can be accessed use the `useRouter` hook.
+
+   `/pages/posts/[slug].js`
+
+   ```jsx
+   import { useRouter } from "next/router";
+
+   export default function Post() {
+     const { slug } = useRouter().query;
+     return <h1>I AM POST {slug}</h1>;
+   }
+   ```
+
+2. When using a `Link` to navigate to a dynamic route, we need a combination of `href` and `as`:
+
+   `/pages/posts/index.js`
 
    ```jsx
    // Data
-   import bootcamps from "../../data";
+   const posts = [...]; //[{title, content, slug}]
 
-   export default function Bootcamps() {
-     const bootcampCards = bootcamps.map((bootcamp) => (
-       <div key={bootcamp.name} className="col-3">
-         <Link href={`/bootcamps/${bootcamp.id}`}>
+   export default function Posts() {
+     const postCards = posts.map((post) => (
+       <div key={post.slug} className="col-3">
+         <Link href="/posts/[slug]" as={`/posts/${post.slug}`}>
            <div type="button" className="card m-5">
-             <img
-               src={bootcamp.image}
-               style={{ backgroundColor: "black" }}
-               alt=""
-               className="card-img-top"
-             />
              <div className="card-body">
-               <h5 className="card-title">{bootcamp.name}</h5>
+               <h5 className="card-title">{post.title}</h5>
              </div>
            </div>
          </Link>
        </div>
      ));
+
      return (
        <div>
-         <h1>All the bootcamps</h1>
-         <div className="row">{bootcampCards}</div>
+         <h1>Posts Page</h1>
+         <div className="row">{postCards}</div>
        </div>
      );
    }
    ```
 
-9. Turn `1.js` into a dynamic route `[id].js` and pull the `id` from the `query`
+---
 
-   `[id].js`
+# Data Fetching in Next.js
 
-   ```jsx
-   import { useRouter } from "next/router";
+Next.js attempts to optimize the pre-rendering of the pages being served as much as possible.  
+If the contents of a page are completely static, it will be served as pure HTML.  
+Next.js will render as much of the page into pure HTML on the server side.  
+Any interactive components on the page will be _hydrated_ on the client side after the accompanying JS loads.
 
-   export default function Bootcamp() {
-     const { id } = useRouter().query;
-     return <h1>I AM BOOTCMAP {id}</h1>;
-   }
-   ```
+When it comes to fetching data in Next.js there are three different strategies that can be adopted depending on your needs.
 
-10. Make `bootcamps/[id].js` more interesting
+## Client Side Rendering (CSR)
 
-    ```jsx
-    export default function BootcampOne() {
-    const { id } = useRouter().query;
+This is the standard way most react apps render data. After the page is served and after the JS loads, the client (the user's browser)
+will make the request to fetch the data and hydrate the page. This means the data will be re-requested every time the page is refreshed.
 
-    const bootcamp = bootcamps.find((bootcamp) => bootcamp.id === id);
+You would use CSR in cases where the data cannot be pre-fetched and is highly dependent on some context on the client-side (like user credentials).  
+Dashboards, personal calendars, and shopping carts are some examples of the kinds of pages that require CSR.
 
-    if (!bootcamp && !id) return <h1>Loading...</h1>;
+To use CSR in Next.js the page (or one of its sub components) need to fetch the data.
 
-    const cohortCards = bootcamp.cohorts.map((cohort) => (
-       <div className="col-3">
-          <div key={cohort.id} className="card">
-          <div className="card-body">
-             <h5 className="card-title">{cohort.name}</h5>
-             <p className="card-text">{cohort.startDate}</p>
-          </div>
-          <ul className="list-group list-group-flush">
-             {cohort.instructors.map((instructor) => (
-                <li
-                key={instructor.name}
-                className="list-group-item d-flex justify-content-between align-items-center"
-                >
-                {instructor.name}
-                <div
-                   src={instructor.image}
-                   style={{
-                      height: 50,
-                      width: 50,
-                      backgroundImage: `url(${instructor.image})`,
-                      backgroundSize: "cover",
-                      borderRadius: "50%",
-                   }}
-                />
-                </li>
-             ))}
-          </ul>
-          </div>
-       </div>
-    ));
+(Switch to the `data-fetching-csr` branch if you want to see an example.)
 
-    return (
-       <>
-          <div
-          className="jumbotron jumbotron-fluid"
-          style={{ backgroundColor: "black", color: "white" }}
-          >
-          <div className="container">
-             <img src={bootcamp.image} alt="" />
-          </div>
-          </div>
-          <div className="container row pb-5">{cohortCards}</div>
-       </>
-    );
-    ```
+`pages/bootcamps/index.js`
 
-### Fetching Data
+```jsx
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-1. Add a API
+// Components
+import BootcampList from "../../components/BootcampList";
 
+export default function Bootcamps() {
+  const [bootcamps, setBootcamps] = useState([]);
+
+  const fetchBootcamps = async () => {
+    const { data } = await axios.get("http://localhost:3001/bootcamps");
+    setBootcamps(data);
+  };
+
+  useEffect(() => {
+    fetchBootcamps();
+  }, []);
+
+  return <BootcampList bootcamps={bootcamps} />;
+}
 ```
 
+`pages/bootcamps/[id].js`
+
+```jsx
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import Error from "next/error";
+
+// Components
+import BootcampDetail from "../../components/BootcampDetail";
+
+export default function Bootcamp() {
+  const { id } = useRouter().query;
+  const [bootcamp, setBootcamp] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBootcamp = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:3001/bootcamps/${id}`);
+      setBootcamp(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchBootcamp();
+  }, [id]);
+
+  if (loading) return <h1>Loading...</h1>;
+
+  if (!bootcamp) return <Error statusCode={404} />;
+
+  return <BootcampDetail bootcamp={bootcamp} />;
+}
 ```
 
+## Server Side Rendering (SSR)
+
+In server side rendering, the data is fetched on the server, on every request, before the HTML file is served. The client doesn't have to make any requests for the data because the page will load with the data already provided. The page will be fully rendered on the server. The data will be re-requested and the page re-rendered on the server every time the page is refreshed.
+
+You should only use SSR in cases where the data might change between requests and can be fetched independent of the client but it's important for it to be pre-rendered. For example, pre-rendering a shop's public inventory for SEO purposes.
+
+To use SSR in Next.js the page would need to export a `getServerSideProps` function. This functions runs on the server every time the page is requested.
+
+(Switch to the `data-fetching-ssr` branch if you want to see an example.)
+
+`pages/bootcamps/index.js`
+
+```jsx
+import axios from "axios";
+
+// Components
+import BootcampList from "../../components/BootcampList";
+
+export default function Bootcamps({ bootcamps }) {
+  return <BootcampList bootcamps={bootcamps} />;
+}
+
+export async function getServerSideProps() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps");
+
+  return {
+    props: {
+      bootcamps: data,
+    },
+  };
+}
 ```
 
+You can access the parameter in a dynamic route through the `context.params` passed to the `getServerSideProps` function.
+
+`pages/bootcamps/[id].js`
+
+```jsx
+import axios from "axios";
+import Error from "next/error";
+
+// Components
+import BootcampDetail from "../../components/BootcampDetail";
+
+export default function Bootcamp({ bootcamp }) {
+  if (!bootcamp) return <Error statusCode={404} />;
+  return <BootcampDetail bootcamp={bootcamp} />;
+}
+
+export async function getServerSideProps(context) {
+  const { id } = context.params;
+
+  let bootcamp;
+
+  try {
+    const { data } = await axios.get(`http://localhost:3001/bootcamps/${id}`);
+    bootcamp = data;
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  return { props: { bootcamp } };
+}
+```
+
+## Static Site Generation (SSG)
+
+Static site generation means that the data is fetched **once** during build time. During the build, Next.js will pre-render the page and generate an HTML file. The client doesn't have to make any requests for the data because the page will load with the data already provided. The page will be fully rendered on the server. The data will not be re-requested even if the client refreshes the page. The state of the content will remain static to when the page was initially built. All users will be served the exact same HTML file. You would need to rebuild the page to show changes to the data.
+
+You should use SSG in cases where the data is public, stable, and will be updated infrequently. Blog posts, shop locations, and courses, are some examples where SSG can be used.
+
+To use SSG in Next.js the page would need to export a `getStaticProps` function. This function runs once at build time.
+
+(Switch to the `data-fetching-ssg` branch if you want to see an example.)
+
+`pages/bootcamps/index.js`
+
+```jsx
+import axios from "axios";
+
+// Components
+import BootcampList from "../../components/BootcampList";
+
+export default function Bootcamps({ bootcamps }) {
+  return <BootcampList bootcamps={bootcamps} />;
+}
+
+export async function getStaticProps() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps");
+
+  return {
+    props: {
+      bootcamps: data,
+    },
+  };
+}
+```
+
+To use SSG with dynamic routes, you would also need to export `getStaticPaths` from the page. This function runs once during the initial build and will generate a static page for each element in the array returned in the `paths` key. The array should have a format similar to `[{ params: { <PARAM_NAME>: <PARAM_VALUE> }}]` where the `<PARAM_NAME>` should match the parameter in the page file name (e.g. `/pages/bootcamps/[id].js` expectes an array like `[{ params: { id: 1 }}]`).
+
+`pages/bootcamps/[id].js`
+
+```jsx
+import axios from "axios";
+import Error from "next/error";
+
+// Components
+import BootcampDetail from "../../components/BootcampDetail";
+
+export default function Bootcamp({ bootcamp }) {
+  if (!bootcamp) return <Error statusCode={404} />;
+  return <BootcampDetail bootcamp={bootcamp} />;
+}
+
+export async function getStaticPaths() {
+  const { data } = await axios.get("http://localhost:3001/bootcamps/ids");
+  const paths = data.map((id) => ({ params: { id } }));
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const { data } = await axios.get(
+    `http://localhost:3001/bootcamps/${params.id}`
+  );
+
+  return { props: { bootcamp: data } };
+}
 ```
