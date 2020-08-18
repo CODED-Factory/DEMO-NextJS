@@ -8,7 +8,7 @@ export default function Bootcamps() {
   const [bootcamps, setBootcamps] = useState([]);
 
   const fetchBootcamps = async () => {
-    const { data } = await axios.get("/api/bootcamps");
+    const { data } = await axios.get("http://localhost:3001/bootcamps");
     setBootcamps(data);
   };
 

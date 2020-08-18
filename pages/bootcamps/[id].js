@@ -13,7 +13,7 @@ export default function BootcampOne() {
 
   const fetchBootcamp = async () => {
     try {
-      const { data } = await axios.get(`/api/bootcamps/${id}`);
+      const { data } = await axios.get(`http://localhost:3001/bootcamps/${id}`);
       setBootcamp(data);
       setLoading(false);
     } catch (error) {
