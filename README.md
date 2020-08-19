@@ -1,9 +1,10 @@
 # Next.js
 
-[Slides](https://docs.google.com/presentation/d/1f4rTPjVXGtefW04qkcVll0mcfhuao2LrrsrCcb9S-DM/edit?usp=sharing)
+[Slides](https://docs.google.com/presentation/d/1f4rTPjVXGtefW04qkcVll0mcfhuao2LrrsrCcb9S-DM/edit?usp=sharing)  
 [Next.js Documentation](https://nextjs.org/docs/getting-started)
 
-<!-- [Recording](https://youtu.be/MNHc0j8PDnE) -->
+[Part 1 Recording](https://youtu.be/Uch_P8gL3Ng)  
+[Part 2 Recording](https://youtu.be/Wxgzb1_5fHs)
 
 ## Setup
 
